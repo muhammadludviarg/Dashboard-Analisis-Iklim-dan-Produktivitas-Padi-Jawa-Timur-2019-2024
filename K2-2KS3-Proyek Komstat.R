@@ -773,7 +773,7 @@ ui <- dashboardPage(
                   title = "Video Tutorial",
                   status = "danger", solidHeader = TRUE, width = 12,
                   p("Berikut adalah video tutorial singkat mengenai cara menggunakan dashboard ini."),
-                  a(href = "https://youtu.be/w804EZgRs24?si=w5F1YH9zxRoOhuKc",
+                  a(href = "https://youtu.be/UgNTweJlRDM",
                     target = "_blank",
                     class = "btn btn-primary btn-lg",
                     style = "width:100%; font-size:18px;background-color:#c4302b; border-color:#c4302b; color:white;",
@@ -798,7 +798,7 @@ ui <- dashboardPage(
                   title = "Akses Kode Sumber (GitHub)",
                   status = "primary", solidHeader = TRUE, width = 12,
                   p("Untuk melihat kode sumber dan dokumentasi proyek ini lebih lanjut, silakan kunjungi repository GitHub berikut:"),
-                  a(href = "https://github.com/NAMA_USER/NAMA_REPO", target = "_blank",
+                  a(href = "https://github.com/muhammadludviarg/Dashboard-Analisis-Iklim-dan-Produktivitas-Padi-Jawa-Timur-2019-2024", target = "_blank",
                     class = "btn btn-info btn-lg", 
                     style="width:100%; font-size:18px;background-color:#367fa9; border-color:#367fa9; color:white",
                     icon("github"), "Kunjungi GitHub Repository")
