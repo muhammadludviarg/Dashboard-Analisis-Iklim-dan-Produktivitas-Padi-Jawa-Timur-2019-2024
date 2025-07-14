@@ -793,6 +793,27 @@ ui <- dashboardPage(
                 )
               ),
               
+              #Informasi Metadata
+              fluidRow(
+                box(
+                  title = "Informasi Metadata Dataset",
+                  status = "info", solidHeader = TRUE, width = 12,
+                  column(4,
+                         selectInput("metadata_dataset_select", "Pilih Dataset:",
+                                     choices = c(
+                                       "Produktivitas Padi" = "produktivitas",
+                                       "Curah Hujan" = "curah_hujan",
+                                       "Temperatur Suhu" = "temperatur"
+                                     ),
+                                     selected = "produktivitas")
+                  ),
+                  column(8,
+                         h5("Detail Metadata:"),
+                         htmlOutput("metadata_output") 
+                  )
+                )
+              ),
+              
               fluidRow(
                 box(
                   title = "Preview Data Produktivitas", status = "info", solidHeader = TRUE, width = 4,
@@ -807,6 +828,8 @@ ui <- dashboardPage(
                   DT::dataTableOutput("preview_curah_hujan")
                 )
               )
+              
+              
       ),
       # Tab User Guide
       tabItem(tabName = "user_guide",
@@ -948,6 +971,153 @@ server <- function(input, output, session) {
     content = function(file) { file.copy("www/REFERENSI/User Guide Dashboard.pdf", file) },
     contentType = "application/pdf"
   )
+  
+  # Fungsi pembantu untuk membuat tabel HTML
+  create_html_table <- function(df_data, headers) {
+    if (is.null(df_data) || nrow(df_data) == 0) {
+      return("<p>Data tabel tidak tersedia.</p>")
+    }
+    
+    # Headers
+    header_row <- paste0("<th>", headers, "</th>", collapse = "")
+    
+    # Rows
+    body_rows <- apply(df_data, 1, function(row) {
+      paste0("<td>", row, "</td>", collapse = "")
+    })
+    body_rows_html <- paste0("<tr>", body_rows, "</tr>", collapse = "")
+    
+    # Full table HTML
+    paste0(
+      "<table class='table table-bordered table-striped' style='font-size: 13px;'>",
+      "<thead><tr>", header_row, "</tr></thead>",
+      "<tbody>", body_rows_html, "</tbody>",
+      "</table>"
+    )
+  }
+  
+  # --- Metadata untuk Produktivitas Padi ---
+  produktivitas_metadata_html <- function() {
+    # Data dari Sumber: Metadata Dashboard.pdf - Tabel Umum [cite: 2]
+    dataset_summary <- data.frame(
+      "Atribut" = c("Format File", "Sumber Data", "Jumlah Kolom", "Struktur Data", "Jumlah Record", "Periode Data", "Cakupan Geografis", "Encoding"),
+      "Nilai" = c("CSV", "BPS", "3", "Long", "228", "2019-2024", "38 Kab/Kota di Jawa Timur", "UTF-8")
+    )
+    
+    # Data dari Sumber: Metadata Dashboard.pdf - Tabel Variabel Produktivitas [cite: 4]
+    variable_data <- data.frame(
+      "Variable Name" = c("kabkota", "tahun", "produktivitas"),
+      "Description" = c("Kab/Kota di Jawa Timur", "Tahun", "Produktivitas padi tahunan"),
+      "Type" = c("String", "Year", "Numeric"),
+      "Measure" = c("Nominal", "Scale", "Scale"),
+      "Satuan" = c("", "", "ku/ha")
+    )
+    
+    paste0(
+      "<h4>Ringkasan Dataset</h4>",
+      "<p>Dataset Produktivitas Padi berisi data tentang rata-rata hasil panen padi per hektar di berbagai kabupaten/kota di Jawa Timur.</p>",
+      create_html_table(dataset_summary, headers = c("Atribut", "Nilai")),
+      
+      "<h4>Metadata Variabel</h4>",
+      "<p>Detail variabel yang terkandung dalam dataset ini:</p>",
+      create_html_table(variable_data, headers = c("Variable Name", "Description", "Type", "Measure", "Satuan"))
+    )
+  }
+  
+  # --- Metadata untuk Temperatur Suhu ---
+  temperatur_metadata_html <- function() {
+    # Data dari Sumber: Metadata Dashboard.pdf - Tabel Umum [cite: 2]
+    dataset_summary <- data.frame(
+      "Atribut" = c("Format File", "Sumber Data", "Jumlah Kolom", "Struktur Data", "Jumlah Record", "Periode Data", "Cakupan Geografis", "Encoding"),
+      "Nilai" = c("CSV", "BMKG", "3", "Long", "54", "2019-2024", "9 Kab/Kota di Jawa Timur", "UTF-8")
+    )
+    
+    # Data dari Sumber: Metadata Dashboard.pdf - Tabel Variabel Temperatur [cite: 10]
+    variable_data <- data.frame(
+      "Variable Name" = c("kabkota", "tahun", "temperatur"),
+      "Description" = c("Kab/Kota di Jawa Timur", "Tahun", "Temperatur tahunan"),
+      "Type" = c("String", "Year", "Numeric"),
+      "Measure" = c("Nominal", "Scale", "Scale"),
+      "Satuan" = c("", "", "°C")
+    )
+    
+    # Catatan Tambahan dari PDF [cite: 6, 7, 8, 9]
+    notes <- paste0(
+      "<p><strong>Catatan Penting:</strong></p>",
+      "<ul>",
+      "<li>Data temperatur harian di provinsi Jawa Timur hanya tersedia untuk beberapa kabupaten. Hal ini dikarenakan keberadaan stasiun BMKG yang terbatas hanya di beberapa titik wilayah saja.</li>",
+      "<li>Data telah diolah dari data harian menjadi data tahunan.</li>",
+      "<li>Seluruh data NA dihapus pada tahap pra-pemrosesan demi menjaga kualitas analisis.</li>",
+      "</ul>"
+    )
+    
+    paste0(
+      "<h4>Ringkasan Dataset</h4>",
+      "<p>Dataset Temperatur ini berisi data tentang rata-rata suhu udara tahunan di berbagai kabupaten/kota di Jawa Timur.</p>",
+      create_html_table(dataset_summary, headers = c("Atribut", "Nilai")),
+      
+      "<h4>Metadata Variabel</h4>",
+      "<p>Detail variabel yang terkandung dalam dataset ini:</p>",
+      create_html_table(variable_data, headers = c("Variable Name", "Description", "Type", "Measure", "Satuan")),
+      notes
+    )
+  }
+  
+  # --- Metadata untuk Curah Hujan ---
+  curah_hujan_metadata_html <- function() {
+    # Data dari Sumber: Metadata Dashboard.pdf - Tabel Umum [cite: 2]
+    dataset_summary <- data.frame(
+      "Atribut" = c("Format File", "Sumber Data", "Jumlah Kolom", "Struktur Data", "Jumlah Record", "Periode Data", "Cakupan Geografis", "Encoding"),
+      "Nilai" = c("CSV", "BMKG", "3", "Long", "54", "2019-2024", "9 Kab/Kota di Jawa Timur", "UTF-8")
+    )
+    
+    # Data dari Sumber: Metadata Dashboard.pdf - Tabel Variabel Curah Hujan [cite: 16]
+    variable_data <- data.frame(
+      "Variable Name" = c("kabkota", "tahun", "curah_hujan"),
+      "Description" = c("Kab/Kota di Jawa Timur", "Tahun", "Curah hujan tahunan"),
+      "Type" = c("String", "Year", "Numeric"),
+      "Measure" = c("Nominal", "Scale", "Scale"),
+      "Satuan" = c("", "-", "mm")
+    )
+    
+    # Catatan Tambahan dari PDF [cite: 12, 13, 14, 15]
+    notes <- paste0(
+      "<p><strong>Catatan Penting:</strong></p>",
+      "<ul>",
+      "<li>Data curah hujan di provinsi Jawa Timur hanya tersedia untuk beberapa kabupaten. Hal ini dikarenakan keberadaan stasiun BMKG yang terbatas hanya di beberapa titik wilayah saja.</li>",
+      "<li>Data telah diolah dari data harian menjadi data tahunan.</li>",
+      "<li>Seluruh data NA dihapus pada tahap pra-pemrosesan demi menjaga kualitas analisis.</li>",
+      "</ul>"
+    )
+    
+    paste0(
+      "<h4>Ringkasan Dataset</h4>",
+      "<p>Dataset Curah Hujan ini berisi data tentang rata-rata curah hujan tahunan di berbagai kabupaten/kota di Jawa Timur.</p>",
+      create_html_table(dataset_summary, headers = c("Atribut", "Nilai")),
+      
+      "<h4>Metadata Variabel</h4>",
+      "<p>Detail variabel yang terkandung dalam dataset ini:</p>",
+      create_html_table(variable_data, headers = c("Variable Name", "Description", "Type", "Measure", "Satuan")),
+      notes
+    )
+  }
+  
+  # Output untuk menampilkan metadata berdasarkan pilihan dropdown
+  output$metadata_output <- renderUI({
+    req(input$metadata_dataset_select) # Pastikan input sudah dipilih
+    
+    selected_dataset_id <- input$metadata_dataset_select
+    
+    # Panggil fungsi metadata yang sesuai
+    html_content <- switch(selected_dataset_id,
+                           "produktivitas" = produktivitas_metadata_html(),
+                           "curah_hujan" = curah_hujan_metadata_html(),
+                           "temperatur" = temperatur_metadata_html(),
+                           "<p>Pilih dataset untuk melihat metadatanya.</p>")
+    
+    HTML(html_content)
+  })
+  
   # =============================================================================
   # OVERVIEW TAB
   # =============================================================================
