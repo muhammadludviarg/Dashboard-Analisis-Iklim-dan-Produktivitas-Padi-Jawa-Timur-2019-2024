@@ -19,6 +19,7 @@ library(Kendall)
 library(corrplot)
 library(biscale)
 library(cowplot)
+library(markdown)
 
 # =============================================================================
 # DATA LOADING (VERSI BARU - DARI FILE CSV LOKAL)
@@ -420,8 +421,11 @@ ui <- dashboardPage(
                 box(
                   title = "Dashboard Overview - Data Real Jawa Timur (Complete Version)", 
                   status = "primary", solidHeader = TRUE, width = 12,
-                  h4("Analisis Berdasarkan Data CSV Semicolon-Separated Format"),
-                  p("Dashboard ini menggunakan data real dari CSV dengan format semicolon-separated yang telah diproses dari wide format ke long format."),
+                  h4("Memahami Keterkaitan Iklim dan Hasil Panen Padi (2019-2024)"),
+                  p(HTML(markdown::markdownToHTML(
+                    text = "Dashboard interaktif ini menyajikan analisis komprehensif mengenai **Produktivitas Padi** di Jawa Timur, beserta dua faktor iklim utama: **Curah Hujan** dan **Temperatur**. Menggunakan data real dari tahun 2019 hingga 2024, Anda dapat menjelajahi tren historis, perbandingan antar kabupaten/kota, distribusi data, hingga analisis korelasi antara variabel iklim dengan produktivitas padi. Dashboard ini dirancang untuk mendukung pengambilan keputusan yang lebih baik dalam sektor pertanian.",
+                    fragment.only = TRUE # Penting: agar hanya menghasilkan fragmen HTML, bukan dokumen lengkap
+                  ))),
                   hr()
                 )
               ),
@@ -477,17 +481,23 @@ ui <- dashboardPage(
                 box(
                   title = "Trend Produktivitas Padi per Tahun", 
                   status = "primary", solidHeader = TRUE, width = 4,
-                  plotlyOutput("overview_chart_produktivitas", height = "300px")
+                  plotlyOutput("overview_chart_produktivitas", height = "300px"),
+                  h5("Interpretasi:"),
+                  htmlOutput("interpretasi_overview_chart_produktivitas")
                 ),
                 box(
                   title = "Trend Temperatur per Tahun", 
                   status = "warning", solidHeader = TRUE, width = 4,
-                  plotlyOutput("overview_chart_temperatur", height = "300px")
+                  plotlyOutput("overview_chart_temperatur", height = "300px"),
+                  h5("Interpretasi:"),
+                  htmlOutput("interpretasi_overview_chart_temperatur")
                 ),
                 box(
                   title = "Trend Curah Hujan per Tahun", 
                   status = "success", solidHeader = TRUE, width = 4,
-                  plotlyOutput("overview_chart_curah_hujan", height = "300px")
+                  plotlyOutput("overview_chart_curah_hujan", height = "300px"),
+                  h5("Interpretasi:"),
+                  htmlOutput("interpretasi_overview_chart_curah_hujan")
                 )
               ),
               
@@ -496,7 +506,9 @@ ui <- dashboardPage(
                 box(
                   title = "Perbandingan Trend Semua Variabel", 
                   status = "danger", solidHeader = TRUE, width = 8,
-                  plotlyOutput("overview_combined_chart", height = "400px")
+                  plotlyOutput("overview_combined_chart", height = "400px"),
+                  h5("Interpretasi:"),
+                  htmlOutput("interpretasi_overview_combined_chart")
                 ),
                 box(
                   title = "Matriks Korelasi Antar Variabel", 
@@ -507,7 +519,10 @@ ui <- dashboardPage(
                   p("Biru: korelasi positif", br(),
                     "Merah: korelasi negatif", br(), 
                     "Intensitas warna menunjukkan kekuatan korelasi", 
-                    style = "font-size: 11px; color: #666;")
+                    style = "font-size: 11px; color: #666;"),
+                  h5("Interpretasi Detail Korelasi:"),
+                  htmlOutput("interpretasi_overview_correlation")
+      
                 )
               )
       ),
@@ -546,22 +561,30 @@ ui <- dashboardPage(
               fluidRow(
                 box(
                   title = "Trend Produktivitas Padi", status = "info", solidHeader = TRUE, width = 6,
-                  plotlyOutput("prod_line_chart", height = "300px")
+                  plotlyOutput("prod_line_chart", height = "300px"),
+                  h5("Interpretasi Trend Produktivitas Padi:"),
+                  htmlOutput("interpretasi_prod_line_chart")
                 ),
                 box(
                   title = "Perbandingan Produktivitas Padi", status = "info", solidHeader = TRUE, width = 6,
-                  plotlyOutput("prod_bar_chart", height = "300px")
+                  plotlyOutput("prod_bar_chart", height = "300px"),
+                  h5("Interpretasi Perbandingan Produktivitas Padi:"),
+                  htmlOutput("interpretasi_prod_bar_chart")
                 )
               ),
               
               fluidRow(
                 box(
                   title = "Distribusi Kategori Produktivitas", status = "info", solidHeader = TRUE, width = 6,
-                  plotlyOutput("prod_pie_chart", height = "300px")
+                  plotlyOutput("prod_pie_chart", height = "300px"),
+                  h5("Interpretasi Distribusi Kategori Produktivitas:"),
+                  htmlOutput("interpretasi_prod_pie_chart")
                 ),
                 box(
                   title = "Peta Produktivitas Padi", status = "info", solidHeader = TRUE, width = 6,
-                  leafletOutput("prod_map", height = "300px")
+                  leafletOutput("prod_map", height = "300px"),
+                  h5("Interpretasi Peta Produktivitas Padi:"),
+                  htmlOutput("interpretasi_prod_map")
                 )
               )
       ),
@@ -588,22 +611,30 @@ ui <- dashboardPage(
               fluidRow(
                 box(
                   title = "Trend Curah Hujan", status = "success", solidHeader = TRUE, width = 6,
-                  plotlyOutput("hujan_line_chart", height = "300px")
+                  plotlyOutput("hujan_line_chart", height = "300px"),
+                  h5("Interpretasi Trend Curah Hujan:"),
+                  htmlOutput("interpretasi_hujan_line_chart")
                 ),
                 box(
                   title = "Perbandingan Curah Hujan", status = "success", solidHeader = TRUE, width = 6,
-                  plotlyOutput("hujan_bar_chart", height = "300px")
+                  plotlyOutput("hujan_bar_chart", height = "300px"),
+                  h5("Interpretasi Perbandingan Curah Hujan:"),
+                  htmlOutput("interpretasi_hujan_bar_chart")
                 )
               ),
               
               fluidRow(
                 box(
                   title = "Distribusi Curah Hujan", status = "success", solidHeader = TRUE, width = 6,
-                  plotlyOutput("hujan_pie_chart", height = "300px")
+                  plotlyOutput("hujan_pie_chart", height = "300px"),
+                  h5("Interpretasi Distribusi Curah Hujan:"),
+                  htmlOutput("interpretasi_hujan_pie_chart")
                 ),
                 box(
                   title = "Peta Curah Hujan", status = "success", solidHeader = TRUE, width = 6,
-                  leafletOutput("hujan_map", height = "300px")
+                  leafletOutput("hujan_map", height = "300px"),
+                  h5("Interpretasi Peta Curah Hujan:"),
+                  htmlOutput("interpretasi_hujan_map")
                 )
               )
       ),
@@ -630,22 +661,30 @@ ui <- dashboardPage(
               fluidRow(
                 box(
                   title = "Trend Temperatur", status = "warning", solidHeader = TRUE, width = 6,
-                  plotlyOutput("temp_line_chart", height = "300px")
+                  plotlyOutput("temp_line_chart", height = "300px"),
+                  h5("Interpretasi Trend Temperatur:"),
+                  htmlOutput("interpretasi_temp_line_chart")
                 ),
                 box(
                   title = "Perbandingan Temperatur", status = "warning", solidHeader = TRUE, width = 6,
-                  plotlyOutput("temp_bar_chart", height = "300px")
+                  plotlyOutput("temp_bar_chart", height = "300px"),
+                  h5("Interpretasi Perbandingan Temperatur:"),
+                  htmlOutput("interpretasi_temp_bar_chart")
                 )
               ),
               
               fluidRow(
                 box(
                   title = "Distribusi Temperatur", status = "warning", solidHeader = TRUE, width = 6,
-                  plotlyOutput("temp_pie_chart", height = "300px")
+                  plotlyOutput("temp_pie_chart", height = "300px"),
+                  h5("Interpretasi Distribusi Temperatur:"),
+                  htmlOutput("interpretasi_temp_pie_chart")
                 ),
                 box(
                   title = "Peta Temperatur", status = "warning", solidHeader = TRUE, width = 6,
-                  leafletOutput("temp_map", height = "300px")
+                  leafletOutput("temp_map", height = "300px"),
+                  h5("Interpretasi Peta Temperatur:"),
+                  htmlOutput("interpretasi_temp_map")
                 )
               )
       ),
@@ -682,7 +721,9 @@ ui <- dashboardPage(
                 box(
                   title = "Peta Bivariat: Iklim vs Produktivitas", status = "danger", solidHeader = TRUE, width = 8,
                   # Output untuk peta Leaflet
-                  leafletOutput("bivariate_map", height = "400px")
+                  leafletOutput("bivariate_map", height = "400px"),
+                  h5("Interpretasi Peta Bivariat:"),
+                  htmlOutput("interpretasi_bivariate_map")
                 ),
                 box(
                   title = "Legenda Bivariat", status = "danger", solidHeader = TRUE, width = 4,
@@ -694,11 +735,15 @@ ui <- dashboardPage(
               fluidRow(
                 box(
                   title = "Scatter Plot: Iklim vs Produktivitas", status = "danger", solidHeader = TRUE, width = 8,
-                  plotlyOutput("korelasi_scatter", height = "400px")
+                  plotlyOutput("korelasi_scatter", height = "400px"),
+                  h5("Interpretasi Scatter Plot:"),
+                  htmlOutput("interpretasi_korelasi_scatter")
                 ),
                 box(
                   title = "Hasil Analisis Statistik", status = "danger", solidHeader = TRUE, width = 4,
-                  verbatimTextOutput("korelasi_hasil")
+                  verbatimTextOutput("korelasi_hasil"),
+                  h5("Implikasi Hasil Statistik:"),
+                  htmlOutput("interpretasi_korelasi_statistik")
                 )
               ),
               
@@ -1248,6 +1293,129 @@ server <- function(input, output, session) {
     }
   })
   
+  #Interpretasi
+  output$interpretasi_overview_chart_produktivitas <- renderUI({
+    if(!is.null(data_produktivitas)) {
+      summary_data <- data_produktivitas %>%
+        group_by(tahun) %>%
+        summarise(rata_rata = mean(produktivitas, na.rm = TRUE), .groups = 'drop')
+      
+      if (nrow(summary_data) > 0) {
+        latest_year <- tail(summary_data$tahun, 1)
+        latest_avg <- round(tail(summary_data$rata_rata, 1), 2)
+        
+        text_markdown <- paste0(
+          "Grafik ini menampilkan tren rata-rata produktivitas padi di seluruh Jawa Timur per tahun. ",
+          "Area bayangan menunjukkan rentang sebaran data (kuartil 25% hingga 75%).\n\n",
+          "Pada tahun **", latest_year, "**, rata-rata produktivitas padi adalah **", latest_avg, " ku/ha**.\n",
+          "Observasi grafik ini membantu memahami apakah ada peningkatan, penurunan, atau stabilitas dalam produktivitas padi secara keseluruhan."
+        )
+      } else {
+        text_markdown <- "Data produktivitas tidak cukup untuk menampilkan interpretasi tren."
+      }
+    } else {
+      text_markdown <- "Data produktivitas tidak tersedia."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  # Interpretasi untuk overview_chart_temperatur
+  output$interpretasi_overview_chart_temperatur <- renderUI({
+    if(!is.null(data_temperatur)) {
+      summary_data <- data_temperatur %>%
+        group_by(tahun) %>%
+        summarise(rata_rata = mean(temperatur, na.rm = TRUE), .groups = 'drop')
+      
+      if (nrow(summary_data) > 0) {
+        latest_year <- tail(summary_data$tahun, 1)
+        latest_avg <- round(tail(summary_data$rata_rata, 1), 2)
+        
+        text_markdown <- paste0(
+          "Grafik ini menunjukkan tren rata-rata temperatur di seluruh Jawa Timur per tahun. ",
+          "Area bayangan merepresentasikan rentang sebaran data temperatur.\n\n",
+          "Pada tahun **", latest_year, "**, rata-rata temperatur adalah **", latest_avg, " °C**.\n",
+          "Pengamatan tren temperatur penting untuk memahami dampak perubahan iklim secara umum di wilayah ini."
+        )
+      } else {
+        text_markdown <- "Data temperatur tidak cukup untuk menampilkan interpretasi tren."
+      }
+    } else {
+      text_markdown <- "Data temperatur tidak tersedia."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$interpretasi_overview_chart_curah_hujan <- renderUI({
+    if(!is.null(data_curah_hujan)) {
+      summary_data <- data_curah_hujan %>%
+        group_by(tahun) %>%
+        summarise(rata_rata = mean(curah_hujan, na.rm = TRUE), .groups = 'drop')
+      
+      if (nrow(summary_data) > 0) {
+        latest_year <- tail(summary_data$tahun, 1)
+        latest_avg <- round(tail(summary_data$rata_rata, 1), 2)
+        
+        text_markdown <- paste0(
+          "Grafik ini menampilkan tren rata-rata curah hujan di seluruh Jawa Timur per tahun. ",
+          "Area bayangan menunjukkan rentang sebaran data curah hujan.\n\n",
+          "Pada tahun **", latest_year, "**, rata-rata curah hujan adalah **", latest_avg, " mm**.\n",
+          "Pemantauan tren curah hujan esensial untuk manajemen air dan perencanaan pertanian."
+        )
+      } else {
+        text_markdown <- "Data curah hujan tidak cukup untuk menampilkan interpretasi tren."
+      }
+    } else {
+      text_markdown <- "Data curah hujan tidak tersedia."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$interpretasi_overview_combined_chart <- renderUI({
+    if(!is.null(data_produktivitas) && !is.null(data_temperatur) && !is.null(data_curah_hujan)) {
+      # Catatan: Interpretasi ini tidak secara langsung menggunakan nilai numerik dari data gabungan yang dinormalisasi.
+      # Jika Anda ingin lebih spesifik, Anda bisa menghitung nilai rata-rata dari data_korelasi atau summary data per tahun.
+      text_markdown <- paste0(
+        "Grafik ini membandingkan tren **Produktivitas Padi, Temperatur, dan Curah Hujan** dari tahun ke tahun setelah dinormalisasi.\n\n",
+        "Normalisasi memungkinkan perbandingan tren relatif antar variabel yang memiliki skala berbeda. ",
+        "Perhatikan bagaimana garis-garis berinteraksi: apakah mereka bergerak searah, berlawanan, atau tidak menunjukkan pola yang jelas.\n",
+        "Misalnya, tren kenaikan temperatur mungkin bersamaan dengan penurunan produktivitas di tahun-tahun tertentu, mengindikasikan potensi dampak iklim."
+      )
+    } else {
+      text_markdown <- "Data tidak lengkap untuk perbandingan tren antar variabel."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$interpretasi_overview_correlation <- renderUI({
+    if (!is.null(data_korelasi) && nrow(data_korelasi) > 0) {
+      cor_data <- data_korelasi %>%
+        select(produktivitas, temperatur, curah_hujan) %>%
+        filter(complete.cases(.))
+      
+      if (nrow(cor_data) > 0) {
+        cor_matrix <- cor(cor_data, use = "complete.obs")
+        
+        prod_temp_cor <- cor_matrix["produktivitas", "temperatur"]
+        prod_hujan_cor <- cor_matrix["produktivitas", "curah_hujan"]
+        
+        text_markdown <- paste0(
+          "Matriks ini menunjukkan koefisien korelasi Pearson antar variabel **Produktivitas Padi, Temperatur, dan Curah Hujan** secara agregat.\n\n",
+          "Warna **biru** mengindikasikan **korelasi positif** (semakin tinggi satu, semakin tinggi yang lain), ",
+          "sedangkan warna **merah** mengindikasikan **korelasi negatif** (semakin tinggi satu, semakin rendah yang lain). Intensitas warna menunjukkan kekuatan korelasi.\n\n",
+          "Observasi kunci:\n",
+          "- Korelasi Produktivitas-Temperatur: **", round(prod_temp_cor, 3), "**\n",
+          "- Korelasi Produktivitas-Curah Hujan: **", round(prod_hujan_cor, 3), "**\n",
+          "Nilai mendekati 1 atau -1 menunjukkan korelasi kuat, sedangkan nilai mendekati 0 menunjukkan korelasi lemah atau tidak ada hubungan. Hasil ini memberikan gambaran awal tentang faktor iklim mana yang lebih terkait dengan produktivitas padi secara keseluruhan di Jawa Timur."
+        )
+      } else {
+        text_markdown <- "Data tidak cukup untuk menghitung dan menginterpretasi matriks korelasi."
+      }
+    } else {
+      text_markdown <- "Data korelasi tidak tersedia."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
   # =============================================================================
   # PRODUKTIVITAS PADI TAB
   # =============================================================================
@@ -1515,6 +1683,214 @@ server <- function(input, output, session) {
     legend
   }, bg = "transparent")
   
+  #Interpretasi
+  output$interpretasi_prod_line_chart <- renderUI({
+    if (!is.null(data_produktivitas)) {
+      if (input$prod_scope == "all") {
+        avg_by_year <- data_produktivitas %>%
+          group_by(tahun) %>%
+          summarise(avg_prod = mean(produktivitas, na.rm = TRUE), .groups = 'drop')
+        
+        # Ambil tahun dan nilai produktivitas terbaru
+        latest_year <- tail(avg_by_year$tahun, 1)
+        latest_prod <- round(tail(avg_by_year$avg_prod, 1), 2)
+        
+        # Hitung trend secara keseluruhan
+        trend_res <- trend_analysis(avg_by_year$avg_prod)
+        trend_desc <- paste0(
+          "Secara keseluruhan, tren produktivitas padi ",
+          ifelse(trend_res$trend == "Increasing", "meningkat", "menurun"),
+          " (P-value: ", round(trend_res$p_value, 4), "). ",
+          ifelse(trend_res$significance == "Significant",
+                 "Ini menunjukkan **perubahan yang signifikan dan konsisten**.",
+                 "Perubahan yang terjadi **belum tentu signifikan secara statistik**.")
+        )
+        
+        text_markdown <- paste0(
+          "Grafik ini menampilkan rata-rata (dan median) produktivitas padi seluruh Jawa Timur dari tahun ke tahun. ",
+          "Area berwarna di sekitar garis menunjukkan rentang interkuartil (Q1-Q3), memberikan gambaran variasi produktivitas antar kabupaten/kota dalam satu tahun.\n\n",
+          "Pada tahun **", latest_year, "**, rata-rata produktivitas mencapai **", latest_prod, " ku/ha**.\n",
+          "Pengamatan tren selama periode ini penting untuk melihat keberlanjutan atau tantangan dalam produksi padi.\n",
+          trend_desc
+        )
+      } else {
+        req(input$prod_kabkota)
+        data_filtered <- data_produktivitas %>%
+          filter(kabkota == input$prod_kabkota) %>%
+          arrange(tahun)
+        
+        if (nrow(data_filtered) > 0) {
+          # Ambil data terbaru untuk kabupaten/kota terpilih
+          latest_year_kab <- tail(data_filtered$tahun, 1)
+          latest_prod_kab <- round(tail(data_filtered$produktivitas, 1), 2)
+          
+          # Hitung trend untuk kabupaten/kota terpilih
+          trend_res_kab <- trend_analysis(data_filtered$produktivitas)
+          trend_desc_kab <- paste0(
+            "Tren produktivitas di **", input$prod_kabkota, "** menunjukkan arah ",
+            ifelse(trend_res_kab$trend == "Increasing", "meningkat", "menurun"),
+            " (P-value: ", round(trend_res_kab$p_value, 4), "). ",
+            ifelse(trend_res_kab$significance == "Significant",
+                   "Ini mengindikasikan adanya **pola peningkatan atau penurunan yang jelas** di wilayah ini.",
+                   "Belum ada **tren yang signifikan secara statistik** yang teridentifikasi di wilayah ini.")
+          )
+          
+          text_markdown <- paste0(
+            "Grafik ini menampilkan tren produktivitas padi khusus untuk Kabupaten/Kota **", input$prod_kabkota, "** dari tahun ke tahun.\n\n",
+            "Pada tahun **", latest_year_kab, "**, produktivitasnya adalah **", latest_prod_kab, " ku/ha**.\n",
+            "Garis merah putus-putus menunjukkan garis regresi linier, memberikan gambaran visual tren secara umum.\n",
+            trend_desc_kab
+          )
+        } else {
+          text_markdown <- "Data tidak cukup untuk interpretasi tren di kabupaten/kota ini."
+        }
+      }
+    } else {
+      text_markdown <- "Data produktivitas tidak tersedia untuk interpretasi tren."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$interpretasi_prod_bar_chart <- renderUI({
+    if (!is.null(data_produktivitas)) {
+      if (input$prod_scope == "all") {
+        req(input$prod_tahun)
+        data_filtered <- data_produktivitas %>%
+          filter(tahun == input$prod_tahun) %>%
+          arrange(desc(produktivitas))
+        
+        text_markdown <- if (nrow(data_filtered) > 0) {
+          top_kab <- data_filtered$kabkota[1]
+          top_prod <- round(data_filtered$produktivitas[1], 2)
+          
+          paste0(
+            "Grafik batang ini menampilkan 15 kabupaten/kota dengan produktivitas padi tertinggi di Jawa Timur untuk tahun **", input$prod_tahun, "**.\n\n",
+            "Kabupaten/Kota **", top_kab, "** memiliki produktivitas tertinggi yaitu **", top_prod, " ku/ha**.\n",
+            "Anda dapat dengan cepat mengidentifikasi wilayah mana yang menjadi produsen padi terdepan berdasarkan produktivitasnya pada tahun yang dipilih."
+          )
+        } else {
+          "Data tidak tersedia untuk tahun ini."
+        }
+      } else {
+        req(input$prod_kabkota)
+        data_filtered <- data_produktivitas %>%
+          filter(kabkota == input$prod_kabkota)
+        
+        text_markdown <- if (nrow(data_filtered) > 0) {
+          avg_prod_kab <- round(mean(data_filtered$produktivitas, na.rm = TRUE), 2)
+          paste0(
+            "Grafik ini menunjukkan produktivitas padi per tahun untuk Kabupaten/Kota **", input$prod_kabkota, "**.\n\n",
+            "Rata-rata produktivitas selama periode yang diamati adalah sekitar **", avg_prod_kab, " ku/ha**.\n",
+            "Ini memungkinkan Anda melihat fluktuasi produktivitas spesifik di wilayah ini dari waktu ke waktu dan bagaimana produktivitasnya bervariasi antar tahun."
+          )
+        } else {
+          "Data tidak tersedia untuk kabupaten/kota ini."
+        }
+      }
+      HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+    } else {
+      HTML(markdown::markdownToHTML(text = "Data produktivitas tidak tersedia untuk interpretasi perbandingan.", fragment.only = TRUE))
+    }
+  })
+  
+  output$interpretasi_prod_pie_chart <- renderUI({
+    if (!is.null(data_produktivitas)) {
+      if (input$prod_scope == "all") {
+        req(input$prod_tahun)
+        data_summary <- data_produktivitas %>%
+          filter(tahun == input$prod_tahun) %>%
+          mutate(kategori = case_when(
+            produktivitas >= 60 ~ "Tinggi (≥60 ku/ha)",
+            produktivitas >= 50 ~ "Sedang (50-59 ku/ha)",
+            TRUE ~ "Rendah (<50 ku/ha)"
+          )) %>%
+          count(kategori) %>%
+          mutate(persentase = round(n / sum(n) * 100, 1))
+        
+        text_markdown <- if (nrow(data_summary) > 0) {
+          interpretasi <- paste0(
+            "Diagram lingkaran ini menunjukkan distribusi proporsi kabupaten/kota dalam kategori produktivitas padi di Jawa Timur untuk tahun **", input$prod_tahun, "**.\n\n"
+          )
+          for (i in 1:nrow(data_summary)) {
+            interpretasi <- paste0(interpretasi, "- Kategori **", data_summary$kategori[i], "**: ", data_summary$n[i], " kabupaten/kota (", data_summary$persentase[i], "%).\n")
+          }
+          interpretasi <- paste0(interpretasi, "\nVisualisasi ini membantu dalam melihat proporsi wilayah yang mencapai tingkat produktivitas tertentu, mengindikasikan sebaran kinerja pertanian.")
+          interpretasi
+        } else {
+          "Data tidak tersedia untuk tahun ini."
+        }
+      } else {
+        req(input$prod_kabkota)
+        data_summary <- data_produktivitas %>%
+          filter(kabkota == input$prod_kabkota) %>%
+          mutate(kategori = case_when(
+            produktivitas >= 60 ~ "Tinggi (≥60 ku/ha)",
+            produktivitas >= 50 ~ "Sedang (50-59 ku/ha)",
+            TRUE ~ "Rendah (<50 ku/ha)"
+          )) %>%
+          count(kategori) %>%
+          mutate(persentase = round(n / sum(n) * 100, 1))
+        
+        text_markdown <- if (nrow(data_summary) > 0) {
+          interpretasi <- paste0(
+            "Diagram lingkaran ini menunjukkan distribusi proporsi tahun di mana produktivitas padi untuk Kabupaten/Kota **", input$prod_kabkota, "** masuk dalam kategori tertentu.\n\n"
+          )
+          for (i in 1:nrow(data_summary)) {
+            interpretasi <- paste0(interpretasi, "- Kategori **", data_summary$kategori[i], "**: ", data_summary$n[i], " tahun (", data_summary$persentase[i], "%).\n")
+          }
+          interpretasi <- paste0(interpretasi, "\nIni menggambarkan seberapa sering produktivitas di wilayah ini masuk dalam kategori tertentu selama periode pengamatan, menunjukkan konsistensi atau variabilitas kinerjanya.")
+          interpretasi
+        } else {
+          "Data tidak tersedia untuk kabupaten/kota ini."
+        }
+      }
+      HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+    } else {
+      HTML(markdown::markdownToHTML(text = "Data produktivitas tidak tersedia untuk interpretasi distribusi kategori.", fragment.only = TRUE))
+    }
+  })
+  
+  output$interpretasi_prod_map <- renderUI({
+    req(data_produktivitas, shp_data_peta, input$prod_scope)
+    
+    if (input$prod_scope == "all") {
+      req(input$prod_tahun)
+      data_tahunan_map <- data_produktivitas %>% filter(tahun == input$prod_tahun)
+      
+      text_markdown <- if (nrow(data_tahunan_map) > 0) {
+        avg_prod_year <- round(mean(data_tahunan_map$produktivitas, na.rm = TRUE), 2)
+        min_prod_year <- round(min(data_tahunan_map$produktivitas, na.rm = TRUE), 2)
+        max_prod_year <- round(max(data_tahunan_map$produktivitas, na.rm = TRUE), 2)
+        
+        paste0(
+          "Peta ini menampilkan rata-rata produktivitas padi untuk setiap kabupaten/kota di Jawa Timur pada tahun **", input$prod_tahun, "**.\n\n",
+          "Warna **hijau gelap** menunjukkan area dengan produktivitas **tinggi**, sementara warna **hijau terang** menunjukkan produktivitas **rendah**.\n",
+          "Rata-rata produktivitas Jawa Timur di tahun ini adalah **", avg_prod_year, " ku/ha**, dengan rentang dari **", min_prod_year, " ku/ha** hingga **", max_prod_year, " ku/ha**.\n",
+          "Anda dapat mengklik wilayah pada peta untuk mengubah filter dan melihat tren spesifik wilayah tersebut."
+        )
+      } else {
+        "Tidak ada data produktivitas tersedia untuk tahun yang dipilih pada peta."
+      }
+    } else {
+      req(input$prod_kabkota)
+      prod_data_kab_all_years <- data_produktivitas %>%
+        filter(kabkota == input$prod_kabkota)
+      
+      text_markdown <- if (nrow(prod_data_kab_all_years) > 0) {
+        avg_prod_kab <- round(mean(prod_data_kab_all_years$produktivitas, na.rm = TRUE), 2)
+        
+        paste0(
+          "Peta ini menyoroti Kabupaten/Kota **", input$prod_kabkota, "** dengan warna **oranye**. Wilayah lain di Jawa Timur ditampilkan dengan warna abu-abu sebagai konteks.\n\n",
+          "Rata-rata produktivitas padi di **", input$prod_kabkota, "** selama periode pengamatan adalah sekitar **", avg_prod_kab, " ku/ha**.\n",
+          "Peta ini membantu memvisualisasikan lokasi geografis kabupaten/kota yang sedang dianalisis secara lebih detail."
+        )
+      } else {
+        "Data produktivitas tidak tersedia untuk kabupaten/kota yang dipilih pada peta."
+      }
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
   # =============================================================================
   # CURAH HUJAN TAB
   # =============================================================================
@@ -1658,6 +2034,257 @@ server <- function(input, output, session) {
     }
   })
   
+  #Interpretasi
+  output$interpretasi_hujan_line_chart <- renderUI({
+    if (!is.null(data_curah_hujan)) {
+      if (input$hujan_kabkota == "all") {
+        avg_by_year <- data_curah_hujan %>%
+          group_by(tahun) %>%
+          summarise(avg_hujan = mean(curah_hujan, na.rm = TRUE), .groups = 'drop')
+        
+        latest_year <- tail(avg_by_year$tahun, 1)
+        latest_hujan <- round(tail(avg_by_year$avg_hujan, 2), 2) # Perbaikan: round to 2 decimal places
+        
+        trend_res <- trend_analysis(avg_by_year$avg_hujan)
+        trend_desc <- paste0(
+          "Secara keseluruhan, tren curah hujan ",
+          ifelse(trend_res$trend == "Increasing", "meningkat", "menurun"),
+          " (P-value: ", round(trend_res$p_value, 4), "). ",
+          ifelse(trend_res$significance == "Significant",
+                 "Ini menunjukkan **perubahan yang signifikan dan konsisten**.",
+                 "Perubahan yang terjadi **belum tentu signifikan secara statistik**.")
+        )
+        
+        text_markdown <- paste0(
+          "Grafik ini menampilkan rata-rata (dan median) curah hujan di seluruh Jawa Timur dari tahun ke tahun.\n\n",
+          "Pada tahun **", latest_year, "**, rata-rata curah hujan tercatat sebesar **", latest_hujan, " mm**.\n",
+          "Pengamatan tren ini penting untuk memahami pola iklim dan ketersediaan air.\n",
+          trend_desc
+        )
+      } else {
+        req(input$hujan_kabkota)
+        data_filtered <- data_curah_hujan %>%
+          filter(kabkota == input$hujan_kabkota) %>%
+          arrange(tahun)
+        
+        if (nrow(data_filtered) > 0) {
+          latest_year_kab <- tail(data_filtered$tahun, 1)
+          latest_hujan_kab <- round(tail(data_filtered$curah_hujan, 1), 2)
+          
+          trend_res_kab <- trend_analysis(data_filtered$curah_hujan)
+          trend_desc_kab <- paste0(
+            "Tren curah hujan di **", input$hujan_kabkota, "** menunjukkan arah ",
+            ifelse(trend_res_kab$trend == "Increasing", "meningkat", "menurun"),
+            " (P-value: ", round(trend_res_kab$p_value, 4), "). ",
+            ifelse(trend_res_kab$significance == "Significant",
+                   "Ini mengindikasikan adanya **pola peningkatan atau penurunan yang jelas** di wilayah ini.",
+                   "Belum ada **tren yang signifikan secara statistik** yang teridentifikasi di wilayah ini.")
+          )
+          
+          text_markdown <- paste0(
+            "Grafik ini menampilkan tren curah hujan khusus untuk Kabupaten/Kota **", input$hujan_kabkota, "** dari tahun ke tahun.\n\n",
+            "Pada tahun **", latest_year_kab, "**, curah hujannya adalah **", latest_hujan_kab, " mm**.\n",
+            "Garis merah putus-putus menunjukkan garis regresi linier, memberikan gambaran visual tren secara umum.\n",
+            trend_desc_kab
+          )
+        } else {
+          text_markdown <- "Data tidak cukup untuk interpretasi tren di kabupaten/kota ini."
+        }
+      }
+    } else {
+      text_markdown <- "Data curah hujan tidak tersedia untuk interpretasi tren."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$hujan_bar_chart <- renderPlotly({
+    if(!is.null(data_curah_hujan)) {
+      data_filtered <- data_curah_hujan %>%
+        filter(tahun == input$hujan_tahun) %>%
+        arrange(desc(curah_hujan))
+      
+      p <- ggplot(data_filtered, aes(x = reorder(kabkota, curah_hujan), y = curah_hujan)) +
+        geom_col(fill = "#00a65a", alpha = 0.8) +
+        coord_flip() +
+        labs(title = paste("Curah Hujan Tahun", input$hujan_tahun),
+             x = "Kabupaten/Kota", y = "Curah Hujan (mm)") +
+        theme_minimal() +
+        theme(axis.text.y = element_text(size = 8))
+      
+      ggplotly(p)
+    } else {
+      plotly_empty() %>% layout(title = "Data tidak tersedia")
+    }
+  })
+  
+  output$interpretasi_hujan_bar_chart <- renderUI({
+    if(!is.null(data_curah_hujan)) {
+      req(input$hujan_tahun)
+      data_filtered <- data_curah_hujan %>%
+        filter(tahun == input$hujan_tahun) %>%
+        arrange(desc(curah_hujan))
+      
+      text_markdown <- if (nrow(data_filtered) > 0) {
+        top_kab <- data_filtered$kabkota[1]
+        top_hujan <- round(data_filtered$curah_hujan[1], 2)
+        
+        paste0(
+          "Grafik batang ini menampilkan curah hujan rata-rata per kabupaten/kota di Jawa Timur untuk tahun **", input$hujan_tahun, "**.\n\n",
+          "Kabupaten/Kota **", top_kab, "** tercatat memiliki curah hujan tertinggi yaitu **", top_hujan, " mm**.\n",
+          "Visualisasi ini membantu mengidentifikasi wilayah dengan curah hujan paling tinggi atau paling rendah pada tahun yang dipilih."
+        )
+      } else {
+        "Data tidak tersedia untuk tahun ini."
+      }
+    } else {
+      text_markdown <- "Data curah hujan tidak tersedia untuk interpretasi perbandingan."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$hujan_pie_chart <- renderPlotly({
+    if(!is.null(data_curah_hujan)) {
+      data_filtered <- data_curah_hujan %>%
+        filter(tahun == input$hujan_tahun) %>%
+        mutate(kategori = case_when(
+          curah_hujan >= 10 ~ "Tinggi (≥10mm)",
+          curah_hujan >= 5 ~ "Sedang (5-9mm)",
+          TRUE ~ "Rendah (<5mm)"
+        )) %>%
+        count(kategori)
+      
+      plot_ly(data_filtered, labels = ~kategori, values = ~n, type = 'pie',
+              textposition = 'inside', textinfo = 'label+percent',
+              marker = list(colors = c("#2166ac", "#5aae61", "#d73027"))) %>%
+        layout(title = paste("Distribusi Kategori Curah Hujan Tahun", input$hujan_tahun))
+    } else {
+      plotly_empty() %>% layout(title = "Data tidak tersedia")
+    }
+  })
+  
+  output$interpretasi_hujan_pie_chart <- renderUI({
+    if(!is.null(data_curah_hujan)) {
+      req(input$hujan_tahun)
+      data_summary <- data_curah_hujan %>%
+        filter(tahun == input$hujan_tahun) %>%
+        mutate(kategori = case_when(
+          curah_hujan >= 10 ~ "Tinggi (≥10mm)",
+          curah_hujan >= 5 ~ "Sedang (5-9mm)",
+          TRUE ~ "Rendah (<5mm)"
+        )) %>%
+        count(kategori) %>%
+        mutate(persentase = round(n / sum(n) * 100, 1))
+      
+      text_markdown <- if (nrow(data_summary) > 0) {
+        interpretasi <- paste0(
+          "Diagram lingkaran ini menunjukkan distribusi proporsi kabupaten/kota dalam kategori curah hujan di Jawa Timur untuk tahun **", input$hujan_tahun, "**.\n\n"
+        )
+        for (i in 1:nrow(data_summary)) {
+          interpretasi <- paste0(interpretasi, "- Kategori **", data_summary$kategori[i], "**: ", data_summary$n[i], " kabupaten/kota (", data_summary$persentase[i], "%).\n")
+        }
+        interpretasi <- paste0(interpretasi, "\nIni memberikan gambaran tentang sebaran wilayah berdasarkan tingkat curah hujan, dari rendah, sedang, hingga tinggi.")
+        interpretasi
+      } else {
+        "Data tidak tersedia untuk tahun ini."
+      }
+    } else {
+      text_markdown <- "Data curah hujan tidak tersedia untuk interpretasi distribusi."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$hujan_map <- renderLeaflet({
+    req(data_curah_hujan, shp_data_peta)
+    
+    if (input$hujan_kabkota == "all") {
+      req(input$hujan_tahun)
+      data_tahunan <- data_curah_hujan %>% filter(tahun == input$hujan_tahun)
+      peta_data_gabungan <- shp_data_peta %>% left_join(data_tahunan, by = c("kabkota_join" = "kabkota"))
+      
+      pal <- colorNumeric(palette = "YlGnBu", domain = peta_data_gabungan$curah_hujan)
+      
+      peta_na <- peta_data_gabungan %>% filter(is.na(curah_hujan))
+      peta_value <- peta_data_gabungan %>% filter(!is.na(curah_hujan))
+      
+      popup_content <- paste0("<strong>", peta_value$nmkab, "</strong><br/>Curah Hujan: ", round(peta_value$curah_hujan, 2), " mm")
+      
+      leaflet() %>%
+        setView(112.5, -7.5, 8) %>%
+        addPolygons(data = peta_na, fillColor = "white", fillOpacity = 1, weight = 1, color = "black", label = ~nmkab) %>%
+        addPolygons(
+          data = peta_value, fillColor = ~pal(curah_hujan), weight = 1, color = "white", fillOpacity = 1,
+          label = ~lapply(popup_content, HTML)
+        ) %>%
+        addLegend(pal = pal, values = peta_value$curah_hujan, opacity = 1, title = "Curah Hujan (mm)", position = "bottomright")
+      
+    } else {
+      req(input$hujan_kabkota)
+      selected_shp <- shp_data_peta %>% filter(kabkota_join == input$hujan_kabkota)
+      
+      hujan_data_kab <- data_curah_hujan %>%
+        filter(kabkota == input$hujan_kabkota) %>%
+        summarise(Rata2 = round(mean(curah_hujan, na.rm = TRUE), 2))
+      
+      label_text <- paste0("<strong>", selected_shp$nmkab, "</strong><br/>Rata-rata Curah Hujan: ", hujan_data_kab$Rata2, " mm")
+      
+      leaflet() %>%
+        addPolygons(data = shp_data_peta, fillColor = "#EAEAEA", fillOpacity = 1, weight = 0.5, color = "white") %>%
+        addPolygons(
+          data = selected_shp,
+          fillColor = "#28a745",
+          weight = 2,
+          color = "red",
+          label = HTML(label_text),
+          labelOptions = labelOptions(noHide = TRUE, textOnly = FALSE, direction = 'auto'),
+          fillOpacity = 1
+        ) %>%
+        setView(lng = st_coordinates(st_centroid(selected_shp$geometry))[1],
+                lat = st_coordinates(st_centroid(selected_shp$geometry))[2],
+                zoom = 9)
+    }
+  })
+  
+  output$interpretasi_hujan_map <- renderUI({
+    req(data_curah_hujan, shp_data_peta, input$hujan_kabkota)
+    
+    if (input$hujan_kabkota == "all") {
+      req(input$hujan_tahun)
+      data_tahunan_map <- data_curah_hujan %>% filter(tahun == input$hujan_tahun)
+      
+      text_markdown <- if (nrow(data_tahunan_map) > 0) {
+        avg_hujan_year <- round(mean(data_tahunan_map$curah_hujan, na.rm = TRUE), 2)
+        min_hujan_year <- round(min(data_tahunan_map$curah_hujan, na.rm = TRUE), 2)
+        max_hujan_year <- round(max(data_tahunan_map$curah_hujan, na.rm = TRUE), 2)
+        
+        paste0(
+          "Peta ini menampilkan rata-rata curah hujan untuk setiap kabupaten/kota di Jawa Timur pada tahun **", input$hujan_tahun, "**.\n\n",
+          "Warna **biru gelap** menunjukkan area dengan curah hujan **tinggi**, sementara warna **biru muda** menunjukkan curah hujan **rendah**.\n",
+          "Rata-rata curah hujan Jawa Timur di tahun ini adalah **", avg_hujan_year, " mm**, dengan rentang dari **", min_hujan_year, " mm** hingga **", max_hujan_year, " mm**.\n",
+          "Peta ini penting untuk memahami ketersediaan air di berbagai wilayah."
+        )
+      } else {
+        "Tidak ada data curah hujan tersedia untuk tahun yang dipilih pada peta."
+      }
+    } else {
+      req(input$hujan_kabkota)
+      hujan_data_kab_all_years <- data_curah_hujan %>%
+        filter(kabkota == input$hujan_kabkota)
+      
+      text_markdown <- if (nrow(hujan_data_kab_all_years) > 0) {
+        avg_hujan_kab <- round(mean(hujan_data_kab_all_years$curah_hujan, na.rm = TRUE), 2)
+        
+        paste0(
+          "Peta ini menyoroti Kabupaten/Kota **", input$hujan_kabkota, "** dengan warna **hijau**. Wilayah lain di Jawa Timur ditampilkan dengan warna abu-abu sebagai konteks.\n\n",
+          "Rata-rata curah hujan di **", input$hujan_kabkota, "** selama periode pengamatan adalah sekitar **", avg_hujan_kab, " mm**.\n",
+          "Peta ini membantu memvisualisasikan lokasi geografis kabupaten/kota yang sedang dianalisis secara lebih detail."
+        )
+      } else {
+        "Data curah hujan tidak tersedia untuk kabupaten/kota yang dipilih pada peta."
+      }
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
   # =============================================================================
   # TEMPERATUR TAB
   # =============================================================================
@@ -1798,6 +2425,168 @@ server <- function(input, output, session) {
                 lat = st_coordinates(st_centroid(selected_shp$geometry))[2], 
                 zoom = 9)
     }
+  })
+  
+  #interpretasi
+  output$interpretasi_temp_line_chart <- renderUI({
+    if (!is.null(data_temperatur)) {
+      if (input$temp_kabkota == "all") {
+        avg_by_year <- data_temperatur %>%
+          group_by(tahun) %>%
+          summarise(avg_temp = mean(temperatur, na.rm = TRUE), .groups = 'drop')
+        
+        latest_year <- tail(avg_by_year$tahun, 1)
+        latest_temp <- round(tail(avg_by_year$avg_temp, 1), 2)
+        
+        trend_res <- trend_analysis(avg_by_year$avg_temp)
+        trend_desc <- paste0(
+          "Secara keseluruhan, tren temperatur ",
+          ifelse(trend_res$trend == "Increasing", "meningkat", "menurun"),
+          " (P-value: ", round(trend_res$p_value, 4), "). ",
+          ifelse(trend_res$significance == "Significant",
+                 "Ini menunjukkan **perubahan yang signifikan dan konsisten**.",
+                 "Perubahan yang terjadi **belum tentu signifikan secara statistik**.")
+        )
+        
+        text_markdown <- paste0(
+          "Grafik ini menampilkan rata-rata (dan median) temperatur di seluruh Jawa Timur dari tahun ke tahun.\n\n",
+          "Pada tahun **", latest_year, "**, rata-rata temperatur tercatat sebesar **", latest_temp, " °C**.\n",
+          "Pengamatan tren temperatur penting untuk memahami dampak perubahan iklim terhadap lingkungan dan pertanian.\n",
+          trend_desc
+        )
+      } else {
+        req(input$temp_kabkota)
+        data_filtered <- data_temperatur %>%
+          filter(kabkota == input$temp_kabkota) %>%
+          arrange(tahun)
+        
+        if (nrow(data_filtered) > 0) {
+          latest_year_kab <- tail(data_filtered$tahun, 1)
+          latest_temp_kab <- round(tail(data_filtered$temperatur, 1), 2)
+          
+          trend_res_kab <- trend_analysis(data_filtered$temperatur)
+          trend_desc_kab <- paste0(
+            "Tren temperatur di **", input$temp_kabkota, "** menunjukkan arah ",
+            ifelse(trend_res_kab$trend == "Increasing", "meningkat", "menurun"),
+            " (P-value: ", round(trend_res_kab$p_value, 4), "). ",
+            ifelse(trend_res_kab$significance == "Significant",
+                   "Ini mengindikasikan adanya **pola peningkatan atau penurunan yang jelas** di wilayah ini.",
+                   "Belum ada **tren yang signifikan secara statistik** yang teridentifikasi di wilayah ini.")
+          )
+          
+          text_markdown <- paste0(
+            "Grafik ini menampilkan tren temperatur khusus untuk Kabupaten/Kota **", input$temp_kabkota, "** dari tahun ke tahun.\n\n",
+            "Pada tahun **", latest_year_kab, "**, temperaturnya adalah **", latest_temp_kab, " °C**.\n",
+            "Garis merah putus-putus menunjukkan garis regresi linier, memberikan gambaran visual tren secara umum.\n",
+            trend_desc_kab
+          )
+        } else {
+          text_markdown <- "Data tidak cukup untuk interpretasi tren di kabupaten/kota ini."
+        }
+      }
+    } else {
+      text_markdown <- "Data temperatur tidak tersedia untuk interpretasi tren."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  
+  output$interpretasi_temp_bar_chart <- renderUI({
+    if(!is.null(data_temperatur)) {
+      req(input$temp_tahun)
+      data_filtered <- data_temperatur %>%
+        filter(tahun == input$temp_tahun) %>%
+        arrange(desc(temperatur))
+      
+      text_markdown <- if (nrow(data_filtered) > 0) {
+        top_kab <- data_filtered$kabkota[1]
+        top_temp <- round(data_filtered$temperatur[1], 2)
+        
+        paste0(
+          "Grafik batang ini menampilkan temperatur rata-rata per kabupaten/kota di Jawa Timur untuk tahun **", input$temp_tahun, "**.\n\n",
+          "Kabupaten/Kota **", top_kab, "** tercatat memiliki temperatur tertinggi yaitu **", top_temp, " °C**.\n",
+          "Visualisasi ini membantu mengidentifikasi wilayah mana yang cenderung lebih panas atau lebih sejuk pada tahun yang dipilih."
+        )
+      } else {
+        "Data tidak tersedia untuk tahun ini."
+      }
+    } else {
+      text_markdown <- "Data temperatur tidak tersedia untuk interpretasi perbandingan."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  
+  output$interpretasi_temp_pie_chart <- renderUI({
+    if(!is.null(data_temperatur)) {
+      req(input$temp_tahun)
+      data_summary <- data_temperatur %>%
+        filter(tahun == input$temp_tahun) %>%
+        mutate(kategori = case_when(
+          temperatur >= 28 ~ "Panas (≥28°C)",
+          temperatur >= 25 ~ "Sedang (25-27°C)",
+          TRUE ~ "Sejuk (<25°C)"
+        )) %>%
+        count(kategori) %>%
+        mutate(persentase = round(n / sum(n) * 100, 1))
+      
+      text_markdown <- if (nrow(data_summary) > 0) {
+        interpretasi <- paste0(
+          "Diagram lingkaran ini menunjukkan distribusi proporsi kabupaten/kota dalam kategori temperatur di Jawa Timur untuk tahun **", input$temp_tahun, "**.\n\n"
+        )
+        for (i in 1:nrow(data_summary)) {
+          interpretasi <- paste0(interpretasi, "- Kategori **", data_summary$kategori[i], "**: ", data_summary$n[i], " kabupaten/kota (", data_summary$persentase[i], "%).\n")
+        }
+        interpretasi <- paste0(interpretasi, "\nIni memberikan gambaran tentang sebaran wilayah berdasarkan tingkat temperatur, dari sejuk, sedang, hingga panas.")
+        interpretasi
+      } else {
+        "Data tidak tersedia untuk tahun ini."
+      }
+    } else {
+      text_markdown <- "Data temperatur tidak tersedia untuk interpretasi distribusi."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$interpretasi_temp_map <- renderUI({
+    req(data_temperatur, shp_data_peta, input$temp_kabkota)
+    
+    if (input$temp_kabkota == "all") {
+      req(input$temp_tahun)
+      data_tahunan_map <- data_temperatur %>% filter(tahun == input$temp_tahun)
+      
+      text_markdown <- if (nrow(data_tahunan_map) > 0) {
+        avg_temp_year <- round(mean(data_tahunan_map$temperatur, na.rm = TRUE), 2)
+        min_temp_year <- round(min(data_tahunan_map$temperatur, na.rm = TRUE), 2)
+        max_temp_year <- round(max(data_tahunan_map$temperatur, na.rm = TRUE), 2)
+        
+        paste0(
+          "Peta ini menampilkan rata-rata temperatur untuk setiap kabupaten/kota di Jawa Timur pada tahun **", input$temp_tahun, "**.\n\n",
+          "Warna **merah gelap** menunjukkan area dengan temperatur **tinggi (panas)**, sementara warna **kuning/oranye** menunjukkan temperatur **sedang/sejuk**.\n",
+          "Rata-rata temperatur Jawa Timur di tahun ini adalah **", avg_temp_year, " °C**, dengan rentang dari **", min_temp_year, " °C** hingga **", max_temp_year, " °C**.\n",
+          "Peta ini penting untuk memahami variasi suhu di berbagai wilayah."
+        )
+      } else {
+        "Tidak ada data temperatur tersedia untuk tahun yang dipilih pada peta."
+      }
+    } else {
+      req(input$temp_kabkota)
+      temp_data_kab_all_years <- data_temperatur %>%
+        filter(kabkota == input$temp_kabkota)
+      
+      text_markdown <- if (nrow(temp_data_kab_all_years) > 0) {
+        avg_temp_kab <- round(mean(temp_data_kab_all_years$temperatur, na.rm = TRUE), 2)
+        
+        paste0(
+          "Peta ini menyoroti Kabupaten/Kota **", input$temp_kabkota, "** dengan warna **oranye terang**. Wilayah lain di Jawa Timur ditampilkan dengan warna abu-abu sebagai konteks.\n\n",
+          "Rata-rata temperatur di **", input$temp_kabkota, "** selama periode pengamatan adalah sekitar **", avg_temp_kab, " °C**.\n",
+          "Peta ini membantu memvisualisasikan lokasi geografis kabupaten/kota yang sedang dianalisis secara lebih detail."
+        )
+      } else {
+        "Data temperatur tidak tersedia untuk kabupaten/kota yang dipilih pada peta."
+      }
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
   })
   
   # =============================================================================
@@ -1952,6 +2741,97 @@ server <- function(input, output, session) {
         backgroundColor = styleEqual("Signifikan", "#abdda4")
       )
   })
+  
+  #Interpretasi
+  output$interpretasi_bivariate_map <- renderUI({
+    req(input$korel_var, input$korel_tahun)
+    
+    var_label <- ifelse(input$korel_var == "temperatur", "Temperatur", "Curah Hujan")
+    
+    text_markdown <- paste0(
+      "Peta bivariat ini memvisualisasikan hubungan antara **", var_label, "** dan **Produktivitas Padi** untuk tahun **", input$korel_tahun, "** di kabupaten/kota yang datanya tersedia.\n\n",
+      "Peta ini menggunakan skema warna 3x3 dari paket 'biscale'. Setiap kotak warna (lihat legenda di samping) merepresentasikan kombinasi tingkat ", tolower(var_label), " (sumbu X legenda) dan produktivitas padi (sumbu Y legenda).\n\n",
+      "Sebagai contoh:\n",
+      "- Kotak warna di **kanan atas** menunjukkan wilayah dengan **", var_label, " tinggi** dan **Produktivitas Padi tinggi**.\n",
+      "- Kotak warna di **kiri bawah** menunjukkan wilayah dengan **", var_label, " rendah** dan **Produktivitas Padi rendah**.\n",
+      "Peta ini membantu mengidentifikasi wilayah dengan karakteristik iklim-produktivitas yang serupa atau berbeda."
+    )
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$interpretasi_korelasi_scatter <- renderUI({
+    req(input$korel_var, input$korel_tahun, data_korelasi)
+    
+    data_plot_filtered <- data_korelasi %>%
+      filter(tahun == input$korel_tahun)
+    
+    kab_filter_text <- ""
+    if(input$korel_kabkota != "all") {
+      data_plot_filtered <- data_plot_filtered %>% filter(kabkota == input$korel_kabkota)
+      kab_filter_text <- paste0("di Kabupaten/Kota **", input$korel_kabkota, "** ")
+    }
+    
+    text_markdown <- if (nrow(data_plot_filtered) > 0) {
+      var_x_label <- ifelse(input$korel_var == "temperatur", "Temperatur", "Curah Hujan")
+      
+      paste0(
+        "Scatter plot ini menunjukkan hubungan antara **", var_x_label, "** dan **Produktivitas Padi** untuk tahun **", input$korel_tahun, "** ", kab_filter_text, ".\n\n",
+        "Setiap titik merepresentasikan data dari satu kabupaten/kota. Garis putus-putus merah adalah garis regresi linier yang menunjukkan tren hubungan secara umum.\n",
+        "Jika garis cenderung naik, ada indikasi korelasi positif; jika cenderung turun, ada indikasi korelasi negatif.\n",
+        "Penyebaran titik-titik di sekitar garis menunjukkan seberapa kuat hubungan tersebut. Semakin rapat titik-titik pada garis, semakin kuat korelasinya."
+      )
+    } else {
+      "Data tidak tersedia untuk membuat scatter plot dan interpretasi."
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  output$interpretasi_korelasi_statistik <- renderUI({
+    req(input$korel_var, input$korel_kabkota, data_korelasi)
+    
+    data_analisis <- data_korelasi %>%
+      filter(
+        if (input$korel_kabkota != "all") kabkota == input$korel_kabkota else TRUE
+      )
+    
+    text_markdown <- if (nrow(data_analisis) < 3) {
+      "Data tidak cukup untuk analisis statistik yang mendalam."
+    } else {
+      variabel_x <- if (input$korel_var == "temperatur") data_analisis$temperatur else data_analisis$curah_hujan
+      label_x <- if (input$korel_var == "temperatur") "Temperatur" else "Curah Hujan"
+      
+      hasil_tes <- correlation_analysis(variabel_x, data_analisis$produktivitas)
+      
+      korelasi_val <- round(hasil_tes$correlation, 4)
+      p_val <- round(hasil_tes$p_value, 4)
+      
+      kekuatan_korelasi <- case_when(
+        is.na(korelasi_val) ~ "Tidak Terdefinisi",
+        abs(korelasi_val) >= 0.8 ~ "Sangat Kuat",
+        abs(korelasi_val) >= 0.6 ~ "Kuat",
+        abs(korelasi_val) >= 0.4 ~ "Sedang",
+        abs(korelasi_val) >= 0.2 ~ "Lemah",
+        TRUE ~ "Sangat Lemah"
+      )
+      
+      paste0(
+        "Koefisien Korelasi (r) menunjukkan kekuatan dan arah hubungan linear: positif (r > 0) berarti keduanya cenderung naik/turun bersama, negatif (r < 0) berarti satu naik saat yang lain turun.\n\n",
+        "Nilai mutlak |r|:\n",
+        "- **0.8-1.0**: Sangat Kuat\n",
+        "- **0.6-0.8**: Kuat\n",
+        "- **0.4-0.6**: Sedang\n",
+        "- **0.2-0.4**: Lemah\n",
+        "- **0.0-0.2**: Sangat Lemah / Tidak Ada Hubungan\n\n",
+        "P-value (< **0.05**) mengindikasikan bahwa korelasi yang diamati signifikan secara statistik, artinya kemungkinan besar bukan terjadi karena kebetulan. P-value yang lebih besar menunjukkan hubungan tersebut mungkin tidak signifikan.\n\n",
+        "Berdasarkan analisis ini (r = **", korelasi_val, "**, p-value = **", p_val, "**), dapat disimpulkan bahwa hubungan antara **", label_x, "** dan **Produktivitas Padi** di ",
+        ifelse(input$korel_kabkota == "all", "seluruh Jawa Timur", paste0("Kabupaten/Kota **", input$korel_kabkota, "**")),
+        " adalah **", tolower(hasil_tes$significance), "** dengan kekuatan korelasi **", kekuatan_korelasi, "**."
+      )
+    }
+    HTML(markdown::markdownToHTML(text = text_markdown, fragment.only = TRUE))
+  })
+  
+  
   
   
   # =============================================================================
